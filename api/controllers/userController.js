@@ -36,7 +36,7 @@ export default {
             return;
         }
 
-        if (!req.user.roles.includes("TWITCH_BOT", "SUPER_USER")) {
+        if (!req.user.roles.includes("TWITCH_BOT") || !req.user.roles.includes("SUPER_USER")) {
             req.body.connected = null;
         }
 
