@@ -13,23 +13,31 @@ export default {
             res.json(results)
         })
     },
-    getUser: (req, res) => {
-        Users.findById(req.params.id, (error, result) => {
-            if (error) {
-                console.error("ERROR: " + error.message + ": " + error.stack);
-                res.status(400)
-                res.send(error)
-                return
+    getUser: async (req, res) => {
+        try {
+            // First try to find by username
+            let user = await Users.findOne({username: req.params.id}).exec();
+
+            // If not found by username, try object id
+            if (user === null) {
+                user = await Users.findById(req.params.id).exec();
             }
 
-            if (result === null) {
+            // If user is still null, then throw a 404.
+            if (user === null) {
                 res.status(404)
                 res.send("User not found")
                 return
             }
 
-            res.json(result)
-        })
+            res.json(user);
+            return;
+        } catch (error) {
+            console.error("ERROR: " + error.message + ": " + error.stack);
+                res.status(400)
+                res.send(error)
+                return
+        }
     },
     createUser: (req, res) => {
         if (req.user.roles.length <= 0) {
