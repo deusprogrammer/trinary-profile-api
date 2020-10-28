@@ -48,7 +48,7 @@ export default {
 
         Users.create(req.body, (error, result) => {
             if (error) {
-                console.error("ERROR: " + error.message + ": " + error.stack);
+                console.error(error.message + ": " + error.stack);
                 if (error.message.startsWith("E11000")) {
                     res.status(409)
                 } else {
