@@ -4,6 +4,7 @@ export default {
     getUsers: (req, res) => {
         Users.find({}, (error, results) => {
             if (error) {
+                console.error("ERROR: " + error.message + ": " + error.stack);
                 res.send(error)
                 res.status(400)
                 return
@@ -15,6 +16,7 @@ export default {
     getUser: (req, res) => {
         Users.findById(req.params.id, (error, result) => {
             if (error) {
+                console.error("ERROR: " + error.message + ": " + error.stack);
                 res.status(400)
                 res.send(error)
                 return
@@ -65,6 +67,7 @@ export default {
 
         Users.findOneAndUpdate({_id: req.params.id}, req.body, (error, result) => {
             if (error) {
+                console.error("ERROR: " + error.message + ": " + error.stack);
                 res.status(400)
                 res.send(error)
                 return
@@ -89,6 +92,7 @@ export default {
 
         Users.remove({_id: req.params.id}, (error, result) => {
             if (error) {
+                console.error("ERROR: " + error.message + ": " + error.stack);
                 res.status(400)
                 res.send(error)
                 return
