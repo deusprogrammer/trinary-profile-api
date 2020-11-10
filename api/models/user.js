@@ -24,6 +24,11 @@ let userSchema = mongoose.Schema({
             userId: {
                 type: String,
                 unique: true
+            },
+            channels: {
+                type: Array,
+                of: String,
+                default: []
             }
         }
     }
