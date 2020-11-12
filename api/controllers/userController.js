@@ -15,6 +15,10 @@ export default {
     },
     getUser: async (req, res) => {
         try {
+            if (req.params.id === "~self") {
+                req.params.id = req.user._id;
+            }
+
             // First try to find by username
             let user = await Users.findOne({username: req.params.id}).exec();
 
