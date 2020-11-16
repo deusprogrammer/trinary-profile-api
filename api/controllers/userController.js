@@ -58,20 +58,31 @@ export default {
             req.body.roles = [];
         }
 
-        Users.create(req.body, (error, result) => {
-            if (error) {
-                console.error(error.message + ": " + error.stack);
-                if (error.message.startsWith("E11000")) {
-                    res.status(409)
-                } else {
-                    res.status(400)
+        try {
+            let result = await Users.findOneAndUpdate(
+                {
+                    username: req.body.username,
+                    "connected.twitch.userId": req.body.connected.twitch.userId
+                },
+                req.body,
+                {
+                    new: true,
+                    upsert: true
                 }
-                res.send(error)
-                return
-            }
+            );
 
-            res.json(result)
-        })
+            res.json(result);
+            return;
+        } catch (error) {
+            console.error(error.message + ": " + error.stack);
+            if (error.message.startsWith("E11000")) {
+                res.status(409)
+            } else {
+                res.status(400)
+            }
+            res.send(error)
+            return
+        }
     },
     updateUser: (req, res) => {
         // If user is not owner
