@@ -43,7 +43,7 @@ export default {
                 return
         }
     },
-    createUser: (req, res) => {
+    createUser: async (req, res) => {
         if (req.user.roles.length <= 0) {
             res.status(403);
             res.send("Insufficient privileges");
