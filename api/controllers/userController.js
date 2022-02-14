@@ -44,6 +44,7 @@ export default {
         }
     },
     createUser: async (req, res) => {
+        // TODO Don't wipe out if already existing.
         if (req.user.roles.length <= 0) {
             res.status(403);
             res.send("Insufficient privileges");
@@ -52,13 +53,21 @@ export default {
 
         if (!req.user.roles.includes("TWITCH_BOT") && !req.user.roles.includes("SUPER_USER")) {
             req.body.connected = null;
-        }
-
-        if (!req.user.roles.includes("TWITCH_BOT") && !req.user.roles.includes("SUPER_USER")) {
             req.body.roles = [];
         }
 
         try {
+            // If user already exists, don't do anything.
+            let user = await Users.findOne({
+                username: req.body.username,
+                "connected.twitch.userId": req.body.connected.twitch.userId
+            });
+            if (user) {
+                res.status(200);
+                res.send();
+                return;
+            }
+
             let result = await Users.findOneAndUpdate(
                 {
                     username: req.body.username,
