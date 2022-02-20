@@ -59,15 +59,6 @@ export default {
         let newUser = req.body;
 
         try {
-            // See if the user exists already.  If so, make sure the roles don't get wiped out.
-            let oldUser = await Users.findOne({
-                username: req.body.username,
-                "connected.twitch.userId": req.body.connected.twitch.userId
-            });
-            if (newUser.roles.length() <= 0) {
-                newUser.roles = oldUser.roles;
-            }
-
             let result = await Users.findOneAndUpdate(
                 {
                     username: req.body.username,
