@@ -56,16 +56,16 @@ export default {
             req.body.roles = [];
         }
 
+        let newUser = req.body;
+
         try {
-            // If user already exists, don't do anything.
-            let user = await Users.findOne({
+            // See if the user exists already.  If so, make sure the roles don't get wiped out.
+            let oldUser = await Users.findOne({
                 username: req.body.username,
                 "connected.twitch.userId": req.body.connected.twitch.userId
             });
-            if (user) {
-                res.status(200);
-                res.send();
-                return;
+            if (newUser.roles.length() <= 0) {
+                newUser.roles = oldUser.roles;
             }
 
             let result = await Users.findOneAndUpdate(
@@ -73,7 +73,7 @@ export default {
                     username: req.body.username,
                     "connected.twitch.userId": req.body.connected.twitch.userId
                 },
-                req.body,
+                newUser,
                 {
                     new: true,
                     upsert: true
