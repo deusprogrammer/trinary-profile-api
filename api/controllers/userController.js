@@ -1,5 +1,10 @@
 import Users from '../models/user'
 
+const isObjectId = (value) => {
+    const regex = /^[a-f\d]{24}$/i;
+    return regex.test(value);
+}
+
 export default {
     getUsers: (req, res) => {
         Users.find({}, (error, results) => {
@@ -19,15 +24,15 @@ export default {
                 req.params.id = req.user._id;
             }
 
-            // First try to find by username
-            let user = await Users.findOne({username: req.params.id}).exec();
-
-            // If not found by username, try object id
-            if (user === null) {
+            // Search for user.
+            let user = null;
+            if (!isObjectId(req.params.id)) {
+                user = await Users.findOne({username: req.params.id}).exec();
+            } else {
                 user = await Users.findById(req.params.id).exec();
             }
 
-            // If user is still null, then throw a 404.
+            // If user is null, then throw a 404.
             if (user === null) {
                 res.status(404)
                 res.send("User not found")
@@ -38,9 +43,9 @@ export default {
             return;
         } catch (error) {
             console.error("ERROR: " + error.message + ": " + error.stack);
-                res.status(400)
-                res.send(error)
-                return
+            res.status(400)
+            res.send(error)
+            return
         }
     },
     createUser: async (req, res) => {
